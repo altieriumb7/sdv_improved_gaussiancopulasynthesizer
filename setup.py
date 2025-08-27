@@ -14,7 +14,8 @@ setup(
         "numpy>=1.18.0",
         "pandas>=1.0.0",
         "torch>=1.8.0",
-        "scipy>=1.5.0"
+        "scipy>=1.5.0",
+        "plotly>=5.23"
     ],
     python_requires=">=3.7",
 )
