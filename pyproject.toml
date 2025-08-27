@@ -16,18 +16,17 @@ dependencies = [
   "scipy>=1.12",
   "plotly>=5.23",
 ]
+classifiers = [
+  "Programming Language :: Python :: 3.12",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
 
-# Extras keep the base install light; pick what you need.
 [project.optional-dependencies]
 ml = ["torch>=2.3,<3.0"]
 app = ["streamlit>=1.32", "rich>=13.0"]
 sdv = ["sdv>=1.13,<2.0"]
 netcdf = ["xarray>=2024.6.0", "netCDF4>=1.6"]
-
-[project.urls]
-Homepage = "https://github.com/utente/new_sdv"
-Source = "https://github.com/utente/new_sdv"
-Issues = "https://github.com/utente/new_sdv/issues"
 
 [tool.setuptools]
 package-dir = { "" = "src" }
@@ -35,11 +34,3 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[project.classifiers]
-# Optional but nice for PyPI metadata
-# "Development Status :: 3 - Alpha",
-# "Intended Audience :: Science/Research",
-# "License :: OSI Approved :: MIT License",
-# "Programming Language :: Python :: 3.12",
-# "Operating System :: OS Independent",
