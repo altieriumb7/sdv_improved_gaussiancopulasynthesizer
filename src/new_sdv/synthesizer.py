@@ -3,20 +3,13 @@ import pandas as pd
 import torch
 
 from .distributions import DistributionFitter
+from typing import List, Optional
 from .constraints import Constraint
 
-
 class GaussianCopulaSynthesizer:
-    """
-    Synthesizer a copula gaussiana:
-      - Stima una distribuzione marginale per ogni colonna (beta/gamma/norm/categorical)
-      - Trasforma in spazio latente Z ~ N(0,1) via PIT
-      - Stima covarianza/correlazione e campiona da MVN
-      - Inverte le trasformazioni per ottenere dati sintetici nello spazio originale
-    """
-
-    def __init__(self, constraints=None, random_state=None):
+    def __init__(self, constraints: Optional[List[Constraint]] = None, random_state: int = 0):
         self.constraints = constraints or []
+        self.random_state = random_state
         # Gestione seed per riproducibilità
         if isinstance(random_state, int):
             np.random.seed(random_state)
@@ -109,35 +102,8 @@ class GaussianCopulaSynthesizer:
     # ------------------------
     #  SAMPLE
     # ------------------------
-    def sample(self, num_rows: int) -> pd.DataFrame:
-        if not self.fitted:
-            raise RuntimeError("Eseguire fit() prima di sample().")
-
-        if isinstance(self.random_state, int):
-            torch.manual_seed(self.random_state)
-
-        # Campiona da MVN(0, cov) via Cholesky
-        z = torch.randn(num_rows, self.n_columns)
-        z_corr = z @ self.cholesky_L.T  # (num_rows, n_cols)
-        z_corr_np = z_corr.numpy()
-
-        out = {}
-        std_normal = torch.distributions.Normal(0, 1)
-        for j, col in enumerate(self.columns):
-            dist_name, params = self.distributions[col]
-            u = std_normal.cdf(torch.tensor(z_corr_np[:, j])).numpy()
-            # Inversione marginale
-            if dist_name == "categorical":
-                col_vals = DistributionFitter.inv_cdf_categorical(u, params)
-            else:
-                col_vals = DistributionFitter.inv_cdf(dist_name, u, params)
-            out[col] = col_vals
-
-        df = pd.DataFrame(out)
-
-        # Applica vincoli (post-processing)
+    def sample(self, n_rows: int):
+        df = self._sample_raw(n_rows)  # whatever your generator returns
         for c in self.constraints:
-            if isinstance(c, Constraint):
-                df = c.ensure(df)
-
+            df = c.apply_on_sample(df)
         return df
