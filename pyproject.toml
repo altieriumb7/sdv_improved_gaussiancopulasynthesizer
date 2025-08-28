@@ -1,29 +1,29 @@
-[tool.poetry]
-name = "new_sdv_1"
-version = "0.1.0"
-description = "SDV extension: "
-authors = ["You <you@example.com>"]
-license = "MIT"
-readme = "README.md"
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"
 
-# If your package lives in src/new_sdv_2/
-packages = [{ include = "new_sdv_1", from = "src" }]
+[tool.poetry]
+name = "sdv_improved_gaussiancopulasynthesizer"
+version = "0.1.0"
+description = "Synthetic tabular data via an improved Gaussian Copula synthesizer"
+readme = "README.md"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+classifiers = [
+  "Programming Language :: Python :: 3.12",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+# src-layout: tell Poetry where the *importable* package lives
+packages = [{ include = "new_sdv", from = "src" }]
 
 [tool.poetry.dependencies]
-# Set your supported Python range
-python = ">=3.12,<3.14"
-
-# App + data stack (strings are required in TOML)
-streamlit = ">=1.33"
-plotly = ">=5.23,<6"
-pandas = ">=2.2"
+python = ">=3.12,<3.13"
 numpy = ">=1.26"
-scipy = ">=1.11"
-torch = ">=2.4"
+pandas = ">=2.1"
+scipy = ">=1.12"
+plotly = ">=5.23"
+streamlit = ">=1.32"
 
-[tool.poetry.group.dev.dependencies]
-pytest = ">=7.0"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+# If your Gaussian Copula code does NOT need PyTorch, do NOT add torch here.
+# If you later add CTGAN/TVAE, either add torch here or lazy-import it in code.
